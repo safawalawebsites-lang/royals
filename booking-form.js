@@ -69,6 +69,10 @@
   const dateInput = modal.querySelector("#booking-date");
   let previouslyFocused;
 
+  form.querySelectorAll("input[required]").forEach((input) => {
+    input.addEventListener("input", () => input.setCustomValidity(""));
+  });
+
   const localToday = new Date();
   localToday.setMinutes(localToday.getMinutes() - localToday.getTimezoneOffset());
   dateInput.min = localToday.toISOString().slice(0, 10);
@@ -96,6 +100,16 @@
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
+
+    form.querySelectorAll("input[required]").forEach((input) => {
+      input.setCustomValidity(input.value.trim() ? "" : "Please fill out this field.");
+    });
+
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
     const data = new FormData(form);
     const [year, month, day] = String(data.get("date")).split("-");
     const formattedDate = `${day}/${month}/${year}`;
